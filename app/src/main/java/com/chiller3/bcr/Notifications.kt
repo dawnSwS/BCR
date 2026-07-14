@@ -14,6 +14,9 @@ import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.Icon
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -78,6 +81,18 @@ class Notifications(
 
     private val prefs = Preferences(context)
     private val notificationManager = context.getSystemService(NotificationManager::class.java)
+
+
+    private val safeSmallIcon: Icon by lazy {
+        val drawable = context.getDrawable(R.drawable.ic_launcher_quick_settings)!!
+        val width = drawable.intrinsicWidth.takeIf { it > 0 } ?: 96
+        val height = drawable.intrinsicHeight.takeIf { it > 0 } ?: 96
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+        Icon.createWithBitmap(bitmap)
+    }
 
     /**
      * Create a high priority notification channel for the persistent notification.
@@ -159,7 +174,7 @@ class Notifications(
                 setContentText(message)
                 style = Notification.BigTextStyle()
             }
-            setSmallIcon(R.drawable.ic_launcher_quick_settings)
+            setSmallIcon(safeSmallIcon)
             setContentIntent(pendingIntent)
             setOngoing(true)
             setOnlyAlertOnce(true)
@@ -248,7 +263,7 @@ class Notifications(
                 setContentText(text)
                 style = Notification.BigTextStyle()
             }
-            setSmallIcon(R.drawable.ic_launcher_quick_settings)
+            setSmallIcon(safeSmallIcon)
 
             if (file != null && !isDeviceProtectedStorage(file)) {
                 // It is not possible to grant access to SAF URIs to other applications
@@ -411,7 +426,7 @@ class Notifications(
             })
             style = Notification.BigTextStyle()
 
-            setSmallIcon(R.drawable.ic_launcher_quick_settings)
+            setSmallIcon(safeSmallIcon)
 
             build()
         }
@@ -436,7 +451,7 @@ class Notifications(
             })
             style = Notification.BigTextStyle()
 
-            setSmallIcon(R.drawable.ic_launcher_quick_settings)
+            setSmallIcon(safeSmallIcon)
 
             build()
         }
