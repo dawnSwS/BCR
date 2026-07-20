@@ -9,6 +9,8 @@
 
 ### Unreleased
 
+### Version 3.5
+
 * Update Simplified Chinese (zh-CN) translations ([PR #908 @lofx-lee])
 
 ### Version 3.4
